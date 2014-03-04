@@ -127,7 +127,7 @@ class StatsClient(object):
         try:
             d = data.encode('ascii')
             if self.debug:
-                sys.stderr.write('%s: %s' % (self._addr, d))
+                sys.stderr.write(d)
             self._sock.sendto(d, self._addr)
         except socket.error:
             # No time for love, Dr. Jones!
