@@ -60,12 +60,13 @@ class StatsClient(object):
     """A client for statsd."""
 
     def __init__(self, host='localhost', port=8125, prefix=None,
-                 maxudpsize=512):
+                 maxudpsize=512, debug=False):
         """Create a new client."""
         self._addr = (socket.gethostbyname(host), port)
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._prefix = prefix
         self._maxudpsize = maxudpsize
+        self.debug = debug
 
     def pipeline(self):
         return Pipeline(self)
@@ -123,7 +124,10 @@ class StatsClient(object):
     def _send(self, data):
         """Send data to statsd."""
         try:
-            self._sock.sendto(data.encode('ascii'), self._addr)
+            d = data.encode('ascii')
+            if self.debug:
+                sys.stderr.write(self._addr, d)
+            self._sock.sendto(d, self._addr)
         except socket.error:
             # No time for love, Dr. Jones!
             pass
